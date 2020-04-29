@@ -1000,7 +1000,8 @@ File: scss
   position: relative; }
 
 .container-fluid {
-  padding: 25px 25px; }
+  /*padding: 25px 25px;*/
+  padding: 15px 15px; }
 
 .card {
   margin-bottom: 30px; }
@@ -1021,7 +1022,7 @@ File: scss
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); }
 
 .fix-header .page-wrapper {
-  padding-top: 70px; }
+  /*padding-top: 70px;*/ }
 
 .fix-header .right-side-panel {
   top: 70px;

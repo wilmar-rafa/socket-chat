@@ -41,10 +41,14 @@ io.on('connection', (client) => {
     	callback(mensaje);
     })
 
-    client.on('MensajePrivado',(data)=>{
+    client.on('MensajePrivado',(data,callback)=>{
+    	console.log(data);
 
     	let persona=usuarios.getPersona(client.id);
-    	client.broadcast.to(data.para).emit('MensajePrivado',crearMensaje(persona.nombre,data.mensaje));
+    	let mensaje=crearMensaje(persona.nombre,data.mensaje);
+    	client.broadcast.to(data.para).emit('MensajePrivado',mensaje);
+
+    	callback(mensaje);
     })
 
     client.on('disconnect',()=>{

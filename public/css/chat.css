@@ -1,7 +1,8 @@
 .chat-list {
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
-    height: 600px !important;
+    /*height: 600px !important;*/
+    height: 440px !important;
 }
 
 textarea {

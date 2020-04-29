@@ -53,6 +53,8 @@ socket.on('crearMensaje', function(mensaje) {
 socket.on('MensajePrivado', function(mensaje) {
 
     console.log('Servidor:', mensaje);
+    ListaMensajes(mensaje,false);
+    scrollBottom();
 
 });
 

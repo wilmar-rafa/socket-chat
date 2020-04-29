@@ -5,6 +5,8 @@ var divUsuarios=$('#divUsuarios');
 var formEnviar=$('#formEnviar');
 var txtMensaje=$('#txtMensaje');
 var divChatbox=$('#divChatbox');
+var salaTitle =$('#salaTitle');
+var tipoChat  ='sala';
 
 var params= new URLSearchParams(window.location.search);
 var nombre= params.get('nombre');
@@ -22,12 +24,14 @@ function ListaUsuarios (usuarios){
 
 	divUsuarios.html(html);
 
+	salaTitle.html(params.get('sala'));
+
 }
 
 function itemListaUsuarios(usuario, i) {
 
 		html+='<li>';
-        html+=    '<a data-id="'+usuario.id+'" href="javascript:void(0)"><img src="assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>'+usuario.nombre+'<small class="text-success">online</small></span></a>';
+        html+=    '<a data-id="'+usuario.id+'" data-nombre="'+usuario.nombre+'" href="javascript:void(0)"><img src="assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>'+usuario.nombre+'<small class="text-success">online</small></span></a>';
         html+='</li>';
 			
 	};
@@ -44,7 +48,7 @@ function ListaMensajes(mensaje,yo){
 	}
 
 	if(yo){
-			html+='<li class="reverse">';
+			html+='<li class="reverse mensajeSala">';
             html+='    <div class="chat-content">';
             html+='        <h5>'+mensaje.nombre+'</h5>';
             html+='        <div class="box bg-light-inverse">'+mensaje.mensaje+'</div>';
@@ -55,7 +59,7 @@ function ListaMensajes(mensaje,yo){
 
 	}else{
 			
-			html+='<li class="animated fadeIn">';
+			html+='<li class="animated fadeIn mensajeSala">';
 			
 			if (mensaje.nombre!=="Administrador"){
 		    	html+='    <div class="chat-img"><img src="assets/images/users/1.jpg" alt="user" /></div>';
@@ -94,9 +98,19 @@ function scrollBottom() {
 
 divUsuarios.on('click','a',function (){
 
+	$("#divUsuarios li a").removeClass('box bg-light-danger');
+
+	$(this).addClass('box bg-light-danger');
+
 	id= $(this).data('id');
 	if(id){
-		console.log('id',id)
+		console.log('id',id);
+		//window.location = 'chatPrivado.html?id=?'+id;
+		//$('.mensajeSala').hide();
+		tipoChat  ='privado';
+
+	}else{
+		tipoChat  ='sala';
 	}
 	
 });	
@@ -111,17 +125,34 @@ formEnviar.on('submit',function(e){
 		return;
 	}
 	
-	socket.emit('crearMensaje', {
-	    usuario : nombre,
-	    sala	:sala,
-	    mensaje: txtMensaje.val()
-	}, function(mensaje) {
-		console.log('recibido:',mensaje);
-    	txtMensaje.val("").focus();
+	console.log(tipoChat);
 
-    	ListaMensajes(mensaje,true);
-    	scrollBottom();
-	});
+	if (tipoChat==='sala'){
+		socket.emit('crearMensaje', {
+		    usuario : nombre,
+		    sala	:sala,
+		    mensaje: txtMensaje.val()
+		}, function(mensaje) {
+			console.log('recibido:',mensaje);
+	    	txtMensaje.val("").focus();
+
+	    	ListaMensajes(mensaje,true);
+	    	scrollBottom();
+		});
+	}else if (tipoChat==='privado'){
+		socket.emit('MensajePrivado', {
+		    usuario : nombre,
+		    para	:id,
+		    mensaje: txtMensaje.val()
+		}, function(mensaje) {
+			console.log('recibido:',mensaje);
+	    	txtMensaje.val("").focus();
+
+	    	ListaMensajes(mensaje,true);
+	    	scrollBottom();
+		});
+	}
+	
 	
 
 });
